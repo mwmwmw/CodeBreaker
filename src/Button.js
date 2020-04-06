@@ -9,8 +9,6 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import { useSpring, animated } from "react-spring/three";
 
-import { mask, bloom_layer } from "./Materials";
-
 export default function Model(props) {
   const group = useRef();
   const [active, setActive] = useState(false);
@@ -54,12 +52,6 @@ export default function Model(props) {
             material={materials.Button}
             geometry={nodes.ButtonButton_0.geometry}
             name="ButtonButton_0"
-            layer={bloom_layer}
-          />
-          <mesh
-            material={mask}
-            geometry={nodes.ButtonButton_0.geometry}
-            name="ButtonButton_Mask"
           />
           <mesh
             material={materials.MaskPlaneMaterial}

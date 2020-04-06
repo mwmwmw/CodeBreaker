@@ -9,16 +9,12 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import { useSprings, animated } from "react-spring/three";
 
-import { mask, bloom_layer, all_layer } from "./Materials";
-
 const Dot = ({ exact, materials, nodes, position }) => (
-  <animated.group position={position} layers={all_layer}>
+  <animated.group position={position}>
     <mesh
       material={exact ? materials.On : materials.Any}
       geometry={nodes.Indicator_Exact.geometry}
-      layer={bloom_layer}
     />
-    <mesh material={mask} geometry={nodes.Indicator_Exact.geometry} />
   </animated.group>
 );
 
@@ -54,7 +50,7 @@ export default function Model(props) {
   const { clue } = props.pins;
 
   return (
-    <group ref={group} {...props} dispose={null} layers={all_layer}>
+    <group ref={group} {...props} dispose={null}>
       <mesh
         material={materials.Hole}
         geometry={nodes.Indicator.geometry}

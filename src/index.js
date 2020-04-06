@@ -34,7 +34,7 @@ const GAME_MODE = {
 const ninetyDeg = THREE.MathUtils.degToRad(90);
 
 const CameraControl = ({ mode }) => {
-  // const position = useMousePosition();
+  const position = useMousePosition();
 
   var targetPos = new THREE.Vector3(0, 0, 30);
   const { current } = useRef(new THREE.Quaternion());
@@ -42,8 +42,11 @@ const CameraControl = ({ mode }) => {
 
   switch (mode) {
     case GAME_MODE.TITLE:
-      targetPos = new THREE.Vector3(0, 0, 30);
-      targetRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0);
+      targetPos = new THREE.Vector3(position.y * 0.001, position.x * 0.001, 30);
+      targetRotation.setFromAxisAngle(
+        new THREE.Vector3(1, position.y * 0.1, 0),
+        0
+      );
       break;
     case GAME_MODE.GAME:
       targetPos = new THREE.Vector3(0, 8, 8);
@@ -62,13 +65,22 @@ const CameraControl = ({ mode }) => {
   }
 
   useFrame(({ camera, clock, scene }) => {
-    //   const time = clock.getElapsedTime();
+    const time = clock.getElapsedTime();
     camera.rotation.setFromQuaternion(current.slerp(targetRotation, 0.09));
     camera.position.lerp(targetPos, 0.09);
-    //   camera.position.y = 0; //4 + 2 * Math.cos(time);
-    camera.position.x = 0;
-    //   scene.rotation.y = position.cx * 0.2;
-    //   scene.rotation.x = position.cy * 0.4;
+    if (mode === GAME_MODE.TITLE) {
+      camera.position.y += Math.cos(time) * 0.02;
+    }
+    if (mode === GAME_MODE.WIN) {
+      camera.position.z += Math.cos(time) * 0.2;
+      camera.rotation.z += Math.sin(time) * 0.2;
+      camera.rotation.x += Math.sin(time) * 0.01;
+    }
+    if (mode === GAME_MODE.LOSE) {
+      camera.position.z += Math.cos(time) * 0.02;
+      camera.rotation.z += Math.sin(time) * 0.1;
+      camera.rotation.x += Math.cos(time) * 0.01;
+    }
   });
 
   return null;
@@ -218,7 +230,10 @@ const App = () => {
       >
         <ambientLight color={0x808080} intensity={0.5} />
         <CameraControl mode={gameMode} />
-        <FX />
+        <FX
+          glitch={gameMode === GAME_MODE.TITLE || gameMode === GAME_MODE.LOSE}
+          dead={gameMode === GAME_MODE.LOSE}
+        />
         <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
           <pointLight position={[0, 20, 5]} intensity={1} />
           <Suspense fallback={<Dom center>Loading</Dom>}>

@@ -7,8 +7,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLoader, useFrame } from "react-three-fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { mask, bloom_layer } from "./Materials";
-
 export default function Model(props) {
   const group = useRef();
   const { nodes, materials, animations } = useLoader(
@@ -36,13 +34,6 @@ export default function Model(props) {
         material={materials.Red}
         geometry={nodes.TitlePlane.geometry}
         name="TitlePlane"
-        layer={bloom_layer}
-      />
-      <mesh
-        material={mask}
-        geometry={nodes.TitlePlane.geometry}
-        name="TitlePlaneMask"
-        layer={bloom_layer}
       />
       <mesh
         material={materials.MaskPlaneMaterial}
@@ -54,13 +45,8 @@ export default function Model(props) {
           material={materials.WhiteEmission}
           geometry={nodes.CodeBreaker_0.geometry}
           name="CodeBreaker_0"
-          layer={bloom_layer}
         />
-        <mesh
-          material={mask}
-          geometry={nodes.CodeBreaker_0.geometry}
-          name="CodeBreakerMask"
-        />
+        <mesh geometry={nodes.CodeBreaker_0.geometry} name="CodeBreakerMask" />
         <mesh
           material={materials.MaskPlaneMaterial}
           geometry={nodes.CodeBreaker_1.geometry}
