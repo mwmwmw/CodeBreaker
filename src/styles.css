@@ -15,3 +15,9 @@ body {
   color: white;
   font-family: monospace;
 }
+
+#panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

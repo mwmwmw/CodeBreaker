@@ -10,6 +10,8 @@ import React, {
 import * as THREE from "three/src/Three";
 import { useSpring, animated } from "react-spring/three";
 
+import useSound from "use-sound";
+
 import useCodeBreaker, { CODE_PIECES } from "./useGameState";
 import { useMousePosition, useKeyPress } from "./hooks";
 
@@ -28,7 +30,21 @@ const GAME_MODE = {
   TITLE: 1,
   GAME: 2,
   WIN: 3,
-  LOSE: 4
+  LOSE: 4,
+  HOW: 5,
+  CONFIG: 6
+};
+
+const Sound = ({ playing }) => {
+  var [play, { stop }] = useSound("./codebreaker-loop.mp3");
+  useEffect(() => {
+    if (playing) {
+      play();
+    } else {
+      stop();
+    }
+  }, [play, stop, playing]);
+  return null;
 };
 
 const ninetyDeg = THREE.MathUtils.degToRad(90);
@@ -289,6 +305,23 @@ const App = () => {
           </Suspense>
         </group>
       </Canvas>
+      <div id="panel">
+        <button>
+          <span role="img" aria-label="sound-on">
+            ⚙️
+          </span>
+        </button>
+        <button>
+          <span role="img" aria-label="sound-off">
+            🔈
+          </span>
+          <span role="img" aria-label="sound-on">
+            🔊
+          </span>
+        </button>
+        <button>How To Play</button>
+      </div>
+      <Sound playing={true} />
     </>
   );
 };
