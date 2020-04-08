@@ -36,17 +36,21 @@ const GAME_MODE = {
 };
 
 const Sound = ({ playing, file }) => {
-  var [play, { stop, sound }] = useSound(file);
+  var [play, { stop, sound }] = useSound(file, { loop: true });
+
   useEffect(() => {
     if (playing) {
-      play();
+      if (sound) {
+        play(sound.id);
+        sound.fade(0, 1, 1000);
+      }
     } else {
       if (sound) {
-        sound.fade(1, 0, 750);
+        sound.fade(1, 0, 750).once("fade", () => stop(sound.id));
       }
     }
-  }, [play, stop, sound, playing]);
-  return null;
+  }, [play, stop, file, sound, playing]);
+  return <div>{sound && sound.state}</div>;
 };
 
 const ninetyDeg = THREE.MathUtils.degToRad(90);
