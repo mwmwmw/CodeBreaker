@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 import React, {
   useState,
   useRef,
@@ -12,15 +12,15 @@ import { useSpring, animated } from "react-spring/three";
 
 import useSound from "use-sound";
 
-import useCodeBreaker, { CODE_PIECES } from "./useGameState";
-import { useMousePosition, useKeyPress } from "./hooks";
+import useCodeBreaker, { CODE_PIECES } from "./Hooks/useGameState";
+import { useMousePosition, useKeyPress } from "./Hooks/hooks";
 
-import Title from "./Title";
-import GameOver from "./GameOver";
-import Win from "./Win";
-import { DisplayRow, PinRow, GuessRow } from "./Pins";
+import Title from "./Views/Title";
+import GameOver from "./Views/GameOver";
+import Win from "./Views/Win";
+import { DisplayRow, PinRow, GuessRow } from "./Pieces/Pins";
 
-import FX from "./FX";
+import FX from "./Render/FX";
 
 import { Canvas, useFrame, Dom, useThree } from "react-three-fiber";
 
@@ -34,6 +34,8 @@ const GAME_MODE = {
   HOW: 5,
   CONFIG: 6
 };
+
+const ninetyDeg = THREE.MathUtils.degToRad(-90);
 
 const Sound = ({ playing, file }) => {
   var [play, { stop, sound }] = useSound(file, { loop: true });
@@ -52,8 +54,6 @@ const Sound = ({ playing, file }) => {
   }, [play, stop, file, sound, playing]);
   return <div>{sound && sound.state}</div>;
 };
-
-const ninetyDeg = THREE.MathUtils.degToRad(90);
 
 const CameraControl = ({ mode }) => {
   const position = useMousePosition();
@@ -104,9 +104,17 @@ const CameraControl = ({ mode }) => {
       camera.rotation.x += Math.cos(time) * 0.01;
     }
   });
-
   return null;
 };
+const Timer = ({time}) => {
+
+  return <mesh>
+    <ringBufferGeometry args={[1, 5, 32]} />
+    <meshBasicMaterial color={}
+
+  </mesh>
+
+}
 
 const App = () => {
   const {
@@ -225,26 +233,15 @@ const App = () => {
   useEffect(() => {
     if (win) {
       setGameMode(GAME_MODE.WIN);
-      setTimeout(() => {
-        newCode();
-        setInputCode("----");
-        setGameMode(GAME_MODE.TITLE);
-      }, 6000);
     }
     if (!win && lose) {
       setGameMode(GAME_MODE.LOSE);
-      setTimeout(() => {
-        newCode();
-        setInputCode("----");
-        setGameMode(GAME_MODE.TITLE);
-      }, 6000);
     }
   }, [win, lose, newCode]);
 
   return (
     <>
       <Canvas
-        sRGB={false}
         onCreated={({ gl, camera, scene }) => {
           gl.toneMapping = THREE.Uncharted2ToneMapping;
           scene.background = new THREE.Color(0x020204);
@@ -258,7 +255,7 @@ const App = () => {
         />
         <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
           <pointLight position={[0, 20, 5]} intensity={1} />
-          <Suspense fallback={<Dom center>Loading</Dom>}>
+          <Suspense fallback={<Dom center>) ) ) L O A D I N G ( ( (</Dom>}>
             {gameMode === GAME_MODE.TITLE && (
               <Title
                 position={[0, 0, 20]}
@@ -327,19 +324,18 @@ const App = () => {
         </button>
         <button>How To Play</button>
       </div>
-      <Sound
+      {/* <Sound
         playing={gameMode === GAME_MODE.TITLE}
         file={"./codebreaker-loop.mp3"}
       />
-      <Sound playing={gameMode === GAME_MODE.GAME} file={"./game-loop.mp3"} />
+      <Sound playing={gameMode === GAME_MODE.GAME} file={"./game-loop.mp3"} /> */}
     </>
   );
 };
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(
+render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  rootElement
+  document.getElementById("root")
 );
