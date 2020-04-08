@@ -35,15 +35,17 @@ const GAME_MODE = {
   CONFIG: 6
 };
 
-const Sound = ({ playing }) => {
-  var [play, { stop }] = useSound("./codebreaker-loop.mp3");
+const Sound = ({ playing, file }) => {
+  var [play, { stop, sound }] = useSound(file);
   useEffect(() => {
     if (playing) {
       play();
     } else {
-      stop();
+      if (sound) {
+        sound.fade(1, 0, 750);
+      }
     }
-  }, [play, stop, playing]);
+  }, [play, stop, sound, playing]);
   return null;
 };
 
@@ -321,7 +323,11 @@ const App = () => {
         </button>
         <button>How To Play</button>
       </div>
-      <Sound playing={true} />
+      <Sound
+        playing={gameMode === GAME_MODE.TITLE}
+        file={"./codebreaker-loop.mp3"}
+      />
+      <Sound playing={gameMode === GAME_MODE.GAME} file={"./game-loop.mp3"} />
     </>
   );
 };
