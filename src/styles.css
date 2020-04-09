@@ -25,3 +25,30 @@ body {
   top: 0;
   left: 0;
 }
+
+button {
+  background: none;
+  border: 2px solid white;
+  color: white;
+  font-family: monospace;
+  text-transform: uppercase;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  height: 48px;
+  margin: 10px;
+  transition: background 0.4s;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transition: background 0.2s;
+}
+
+button.selected {
+  background: white;
+  color: black;
+  transition: color 0.2s, background 0.2s;
+  font-weight: bold;
+}

@@ -27,6 +27,7 @@ import { Canvas, useFrame, Dom, useThree } from "react-three-fiber";
 import "./styles.css";
 
 const GAME_MODE = {
+  NONE: null,
   TITLE: 1,
   GAME: 2,
   WIN: 3,
@@ -35,7 +36,7 @@ const GAME_MODE = {
   CONFIG: 6
 };
 
-const ninetyDeg = THREE.MathUtils.degToRad(-90);
+const ninetyDeg = THREE.MathUtils.degToRad(90);
 
 const Sound = ({ playing, file }) => {
   var [play, { stop, sound }] = useSound(file, { loop: true });
@@ -54,6 +55,8 @@ const Sound = ({ playing, file }) => {
   }, [play, stop, file, sound, playing]);
   return <div>{sound && sound.state}</div>;
 };
+
+const HowToPlay = (props) => <pre>RULES:</pre>
 
 const CameraControl = ({ mode }) => {
   const position = useMousePosition();
@@ -106,15 +109,19 @@ const CameraControl = ({ mode }) => {
   });
   return null;
 };
-const Timer = ({time}) => {
-
-  return <mesh>
-    <ringBufferGeometry args={[1, 5, 32]} />
-    <meshBasicMaterial color={}
-
-  </mesh>
-
-}
+const Timer = props => {
+  return (
+    <group {...props} dispose={null}>
+      <mesh>
+        <ringBufferGeometry
+          attach="geometry"
+          args={[15, 20, 32, 0, 0, props.time * THREE.MathUtils.degToRad(360)]}
+        />
+        <meshBasicMaterial attach="material" color={"#500088"} />
+      </mesh>
+    </group>
+  );
+};
 
 const App = () => {
   const {
@@ -128,6 +135,7 @@ const App = () => {
   } = useCodeBreaker();
 
   const [gameMode, setGameMode] = useState(GAME_MODE.TITLE);
+  const [modal, setModal] = useState(GAME_MODE.NONE);
 
   const [inputCode, setInputCode] = useState("----");
 
@@ -188,6 +196,15 @@ const App = () => {
   ]);
 
   useEffect(() => {
+    if (win) {
+      setGameMode(GAME_MODE.WIN);
+    }
+    if (!win && lose) {
+      setGameMode(GAME_MODE.LOSE);
+    }
+  }, [win, lose, newCode]);
+
+  useEffect(() => {
     if (onePressed) {
       switchPin(0);
     }
@@ -210,12 +227,18 @@ const App = () => {
           break;
         case GAME_MODE.WIN:
           setGameMode(GAME_MODE.TITLE);
+          newCode();
+          setInputCode("----");
           break;
         case GAME_MODE.LOSE:
           setGameMode(GAME_MODE.TITLE);
+          newCode();
+          setInputCode("----");
           break;
         default:
           setGameMode(GAME_MODE.TITLE);
+          newCode();
+          setInputCode("----");
           break;
       }
     }
@@ -227,17 +250,9 @@ const App = () => {
     enterPressed,
     switchPin,
     pushPlayerCode,
-    gameMode
+    gameMode,
+    newCode
   ]);
-
-  useEffect(() => {
-    if (win) {
-      setGameMode(GAME_MODE.WIN);
-    }
-    if (!win && lose) {
-      setGameMode(GAME_MODE.LOSE);
-    }
-  }, [win, lose, newCode]);
 
   return (
     <>
@@ -255,6 +270,7 @@ const App = () => {
         />
         <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
           <pointLight position={[0, 20, 5]} intensity={1} />
+
           <Suspense fallback={<Dom center>) ) ) L O A D I N G ( ( (</Dom>}>
             {gameMode === GAME_MODE.TITLE && (
               <Title
@@ -280,6 +296,7 @@ const App = () => {
             )}
             {gameMode === GAME_MODE.GAME && (
               <group scale={[0.5, 0.5, 0.5]}>
+                <Timer position={[0, -15, -10]} rotation={[-1.2,0,0]} time={0.9} />
                 <DisplayRow
                   position={[1, 2, -6]}
                   rotation={[1, 0, 0]}
@@ -309,7 +326,8 @@ const App = () => {
         </group>
       </Canvas>
       <div id="panel">
-        <button>
+        <div id="menu">
+        <button onClick={()=>setModal(GAME_MODE.CONFIG)}>
           <span role="img" aria-label="sound-on">
             ⚙️
           </span>
@@ -322,7 +340,13 @@ const App = () => {
             🔊
           </span>
         </button>
-        <button>How To Play</button>
+        <button 
+        className={modal === GAME_MODE.HOW ? "selected" : null} 
+        onClick={()=>modal !== GAME_MODE.HOW ? setModal(GAME_MODE.HOW) : setModal(GAME_MODE.NONE)}>
+          How To Play
+          </button>
+        </div>
+        {modal === GAME_MODE.HOW && <HowToPlay />}
       </div>
       {/* <Sound
         playing={gameMode === GAME_MODE.TITLE}
